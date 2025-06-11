@@ -95,6 +95,12 @@ pub trait ExtendFormula: Sized {
     /// Appends a clause to the formula.
     fn add_clause(&mut self, literals: &[Lit]);
 
+    fn add_clauses(&mut self, clauses: impl IntoIterator<Item = Vec<Lit>>) {
+        for clause in clauses {
+            self.add_clause(&clause);
+        }
+    }
+
     /// Add a new variable to the formula and return it.
     fn new_var(&mut self) -> Var;
 

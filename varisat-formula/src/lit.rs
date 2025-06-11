@@ -23,7 +23,6 @@ impl Var {
     ///
     /// The parameter must be positive and may not represent a variable past `Var::max_var()`.
     #[inline]
-    #[profiling::function]
     pub fn from_dimacs(number: isize) -> Var {
         debug_assert!(number > 0);
         Var::from_index((number - 1) as usize)
@@ -33,7 +32,6 @@ impl Var {
     ///
     /// The index may not represent a variable past `Var::max_var()`.
     #[inline]
-    #[profiling::function]
     pub fn from_index(index: usize) -> Var {
         debug_assert!(index <= Var::max_var().index());
         Var {
@@ -43,7 +41,6 @@ impl Var {
 
     /// The 1-based index representing this variable in the DIMACS CNF encoding.
     #[inline]
-    #[profiling::function]
     pub fn to_dimacs(self) -> isize {
         (self.index + 1) as isize
     }
@@ -76,7 +73,6 @@ impl Var {
     ///
     /// Shortcut for `Lit::from_var(var, polarity)`.
     #[inline]
-    #[profiling::function]
     pub fn lit(self, polarity: bool) -> Lit {
         Lit::from_var(self, polarity)
     }
@@ -85,7 +81,6 @@ impl Var {
     ///
     /// Shortcut for `Lit::positive(var)`.
     #[inline]
-    #[profiling::function]
     pub fn positive(self) -> Lit {
         Lit::positive(self)
     }
@@ -94,7 +89,6 @@ impl Var {
     ///
     /// Shortcut for `Lit::negative(var)`.
     #[inline]
-    #[profiling::function]
     pub fn negative(self) -> Lit {
         Lit::negative(self)
     }
@@ -132,7 +126,6 @@ pub struct Lit {
     code: LitIdx,
 }
 
-#[profiling::all_functions]
 impl Lit {
     /// Creates a literal from a `Var` and a `bool` that is `true` when the literal is positive.
     #[inline]

@@ -44,3 +44,5 @@ pub mod checker {
         ProofTranscriptProcessor, ProofTranscriptStep,
     };
 }
+
+pub use varisat_formula::tools;

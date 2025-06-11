@@ -62,3 +62,5 @@ pub mod test;
 
 pub use cnf::{CnfFormula, ExtendFormula};
 pub use lit::{Lit, Var};
+
+pub mod tools;

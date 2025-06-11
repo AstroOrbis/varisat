@@ -11,7 +11,6 @@ readme = "README.md"
 
 [features]
 default = []
-
 proptest-strategies = ["proptest"]
 internal-testing = ["proptest", "rand"]
 
@@ -19,7 +18,14 @@ internal-testing = ["proptest", "rand"]
 proptest = { version = "0.10.1", optional = true }
 rand = { version = "0.7.3", optional = true }
 profiling = { git="https://github.com/AstroOrbis/profiling"}
+itertools = { git="https://github.com/AstroOrbis/itertools", branch = "profiling"}
+rayon = "1.10.0"
+
+[[bench]]
+name = "exactly_one"
+harness = false
 
 [dev-dependencies]
 proptest = "0.10.1"
 rand = "0.7.3"
+criterion = "0.6.0"

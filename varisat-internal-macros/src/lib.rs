@@ -5,8 +5,7 @@ use std::fmt::Write;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{
-    parse_quote, punctuated::Punctuated, Attribute, Expr, Fields, Ident, Lit, LitStr, Meta,
-    Token,
+    parse_quote, punctuated::Punctuated, Attribute, Expr, Fields, Ident, Lit, LitStr, Meta, Token,
 };
 use synstructure::decl_derive;
 
