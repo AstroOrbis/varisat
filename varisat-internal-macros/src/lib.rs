@@ -5,8 +5,8 @@ use std::fmt::Write;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{
-    parse_quote, punctuated::Punctuated, Attribute, Fields, Ident, Lit, LitStr, Meta,
-    MetaNameValue, Token,
+    parse_quote, punctuated::Punctuated, Attribute, Expr, Fields, Ident, Lit, LitStr, Meta,
+    Token,
 };
 use synstructure::decl_derive;
 
@@ -15,15 +15,14 @@ fn doc_from_attrs(attrs: &[Attribute]) -> Vec<LitStr> {
     let mut lines = vec![];
 
     for attr in attrs.iter() {
-        if let Ok(Meta::NameValue(MetaNameValue {
-            path,
-            lit: Lit::Str(doc_str),
-            ..
-        })) = attr.parse_meta()
-        {
-            if let Some(ident) = path.get_ident() {
+        if let Meta::NameValue(meta_name_value) = &attr.meta {
+            if let Some(ident) = meta_name_value.path.get_ident() {
                 if ident == "doc" {
-                    lines.push(doc_str);
+                    if let Expr::Lit(expr_lit) = &meta_name_value.value {
+                        if let Lit::Str(doc_str) = &expr_lit.lit {
+                            lines.push(doc_str.clone());
+                        }
+                    }
                 }
             }
         }

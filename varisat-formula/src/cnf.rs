@@ -13,6 +13,7 @@ pub struct CnfFormula {
     clause_ranges: Vec<Range<usize>>,
 }
 
+#[profiling::all_functions]
 impl CnfFormula {
     /// Create an empty CNF formula.
     pub fn new() -> CnfFormula {
@@ -147,6 +148,7 @@ pub struct NewVarIter<'a, F, V = Var> {
     phantom: std::marker::PhantomData<V>,
 }
 
+#[profiling::all_functions]
 impl<'a, F, V> Iterator for NewVarIter<'a, F, V>
 where
     F: ExtendFormula,
@@ -165,6 +167,7 @@ where
     }
 }
 
+#[profiling::all_functions]
 impl ExtendFormula for CnfFormula {
     fn add_clause(&mut self, clause: &[Lit]) {
         let begin = self.literals.len();
