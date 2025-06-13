@@ -17,9 +17,11 @@ internal-testing = ["proptest", "rand"]
 [dependencies]
 proptest = { version = "0.10.1", optional = true }
 rand = { version = "0.7.3", optional = true }
-profiling = { git="https://github.com/AstroOrbis/profiling"}
-itertools = { git="https://github.com/AstroOrbis/itertools", branch = "profiling"}
+profiling = { git = "https://github.com/AstroOrbis/profiling" }
+itertools = { git = "https://github.com/AstroOrbis/itertools", branch = "profiling" }
 rayon = "1.10.0"
+serde = { version = "1.0", features = ["derive"] }
+
 
 [[bench]]
 name = "exactly_one"

@@ -2,15 +2,16 @@
 use std::{cmp::max, fmt, ops::Range};
 
 use crate::lit::{Lit, Var};
+use serde::{Deserialize, Serialize};
 
 /// A formula in conjunctive normal form (CNF).
 ///
 /// Equivalent to Vec<Vec<Lit>> but more efficient as it uses a single buffer for all literals.
-#[derive(Clone, Default, Eq)]
+#[derive(Clone, Default, Eq, Serialize, Deserialize)]
 pub struct CnfFormula {
-    var_count: usize,
-    literals: Vec<Lit>,
-    clause_ranges: Vec<Range<usize>>,
+    pub(crate) var_count: usize,
+    pub(crate) literals: Vec<Lit>,
+    pub(crate) clause_ranges: Vec<Range<usize>>,
 }
 
 #[profiling::all_functions]
@@ -19,13 +20,67 @@ impl CnfFormula {
     pub fn new() -> CnfFormula {
         CnfFormula::default()
     }
-
     /// Number of variables in the formula.
     ///
     /// This also counts missing variables if a variable with a higher index is present.
     /// A vector of this length can be indexed with the variable indices present.
     pub fn var_count(&self) -> usize {
         self.var_count
+    }
+
+    pub fn lits(&self) -> &[Lit] {
+        &self.literals
+    }
+
+    pub fn clause_ranges(&self) -> &[Range<usize>] {
+        &self.clause_ranges
+    }
+
+    pub fn compress(&mut self) {
+        let mut compact_lits: Vec<Lit> = Vec::new();
+        let mut compact_ranges: Vec<Range<usize>> = Vec::new();
+
+        for range in self.clause_ranges() {
+            let clause = &self.literals[range.clone()];
+            let clause_len = clause.len();
+            let mut best_match_offset = None;
+            let mut best_match_len = 0;
+
+            for offset in 0..=compact_lits.len().saturating_sub(1) {
+                let match_len = clause
+                    .iter()
+                    .zip(&compact_lits[offset..])
+                    .take_while(|(a, b)| a == b)
+                    .count();
+
+                if match_len > best_match_len {
+                    best_match_len = match_len;
+                    best_match_offset = Some(offset);
+                    if best_match_len == clause_len {
+                        break; // Exact match
+                    }
+                }
+            }
+
+            match best_match_offset {
+                Some(offset) if best_match_len == clause_len => {
+                    compact_ranges.push(offset..offset + clause_len);
+                }
+                Some(offset) => {
+                    let unmatched = &clause[best_match_len..];
+                    compact_lits.extend_from_slice(unmatched);
+                    compact_ranges.push(offset..offset + clause_len);
+                }
+                None => {
+                    let start = compact_lits.len();
+                    compact_lits.extend_from_slice(clause);
+                    compact_ranges.push(start..start + clause_len);
+                }
+            }
+        }
+
+        self.literals = compact_lits;
+        self.clause_ranges = compact_ranges;
     }
 
     /// Increase the number of variables in the formula.

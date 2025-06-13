@@ -1,4 +1,5 @@
 //! Literals and variables.
+use serde::{Deserialize, Serialize};
 use std::{fmt, ops};
 
 /// The backing type used to represent literals and variables.
@@ -12,8 +13,9 @@ pub type LitIdx = u32;
 ///
 /// Creating a variable with an index larger than `Var::max_var().index()` is unsupported. This
 /// might panic or be interpreted as a different variable.
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[repr(transparent)]
+#[serde(transparent)]
 pub struct Var {
     index: LitIdx,
 }
@@ -120,8 +122,9 @@ impl fmt::Display for Var {
 /// literal.
 ///
 /// The restriction on the range of allowed indices for `Var` also applies to `Lit`.
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[repr(transparent)]
+#[serde(transparent)]
 pub struct Lit {
     code: LitIdx,
 }
@@ -276,13 +279,13 @@ impl fmt::Display for Lit {
 #[doc(hidden)]
 pub mod strategy {
     use super::*;
-    use proptest::{prelude::*, *};
+    use proptest::strategy::Strategy;
 
     pub fn var(index: impl Strategy<Value = usize>) -> impl Strategy<Value = Var> {
         index.prop_map(Var::from_index)
     }
 
     pub fn lit(index: impl Strategy<Value = usize>) -> impl Strategy<Value = Lit> {
-        (var(index), bool::ANY).prop_map(|(var, polarity)| var.lit(polarity))
+        (var(index), proptest::bool::ANY).prop_map(|(var, polarity)| var.lit(polarity))
     }
 }
