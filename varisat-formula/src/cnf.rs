@@ -9,9 +9,9 @@ use serde::{Deserialize, Serialize};
 /// Equivalent to Vec<Vec<Lit>> but more efficient as it uses a single buffer for all literals.
 #[derive(Clone, Default, Eq, Serialize, Deserialize)]
 pub struct CnfFormula {
-    pub(crate) var_count: usize,
-    pub(crate) literals: Vec<Lit>,
-    pub(crate) clause_ranges: Vec<Range<usize>>,
+    pub var_count: usize,
+    pub literals: Vec<Lit>,
+    pub clause_ranges: Vec<Range<usize>>,
 }
 
 #[profiling::all_functions]
