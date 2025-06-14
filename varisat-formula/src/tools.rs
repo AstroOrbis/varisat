@@ -48,6 +48,14 @@ pub fn exactly_one_rayon(vars: &[Var]) -> Vec<Vec<Lit>> {
     result
 }
 
+pub fn exactly_one_iter(vars: &[Var]) -> impl Iterator<Item = Vec<Lit>> + '_ {
+    vars.iter()
+        .map(|&var| var.negative())
+        .tuple_combinations()
+        .map(|(a, b)| vec![a, b])
+        .chain(std::iter::once(all_true(vars)))
+}
+
 pub fn all_true_simd_hint(vars: &[Var]) -> Vec<Lit> {
     let mut result = Vec::with_capacity(vars.len());
     let ptr = vars.as_ptr();
