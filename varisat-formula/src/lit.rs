@@ -25,7 +25,7 @@ impl Var {
     ///
     /// The parameter must be positive and may not represent a variable past `Var::max_var()`.
     #[inline]
-    pub fn from_dimacs(number: isize) -> Var {
+    pub const fn from_dimacs(number: isize) -> Var {
         debug_assert!(number > 0);
         Var::from_index((number - 1) as usize)
     }
@@ -34,7 +34,7 @@ impl Var {
     ///
     /// The index may not represent a variable past `Var::max_var()`.
     #[inline]
-    pub fn from_index(index: usize) -> Var {
+    pub const fn from_index(index: usize) -> Var {
         debug_assert!(index <= Var::max_var().index());
         Var {
             index: index as LitIdx,
@@ -43,7 +43,7 @@ impl Var {
 
     /// The 1-based index representing this variable in the DIMACS CNF encoding.
     #[inline]
-    pub fn to_dimacs(self) -> isize {
+    pub const fn to_dimacs(self) -> isize {
         (self.index + 1) as isize
     }
 
@@ -165,7 +165,7 @@ impl Lit {
     }
 
     #[inline]
-    fn from_litidx(index: LitIdx, polarity: bool) -> Lit {
+    const fn from_litidx(index: LitIdx, polarity: bool) -> Lit {
         debug_assert!(index <= Var::max_var().index);
         Lit {
             code: (index << 1) | (!polarity as LitIdx),
@@ -207,13 +207,13 @@ impl Lit {
 
     /// Whether the literal is negative, i.e. a negated variable.
     #[inline]
-    pub fn is_negative(self) -> bool {
+    pub const fn is_negative(self) -> bool {
         (self.code & 1) != 0
     }
 
     /// Whether the literal is positive, i.e. a non-negated variable.
     #[inline]
-    pub fn is_positive(self) -> bool {
+    pub const fn is_positive(self) -> bool {
         !self.is_negative()
     }
 
